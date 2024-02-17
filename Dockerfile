@@ -16,6 +16,9 @@ RUN npm install -g nodemon
 # Bundle app source
 COPY . .
 
+# Run migrations before starting the server
+RUN npm run migrate
+
 EXPOSE 3000
 
 # Start your Node.js app

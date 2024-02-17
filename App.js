@@ -3,6 +3,18 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
+const { Sequelize } = require('sequelize');
+const routes = require('./routes');
+
+// Initialize Sequelize and test database connection
+const sequelize = new Sequelize(require('./config/config')[process.env.NODE_ENV]);
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
 
 app.use(morgan('dev', {
 	skip: function (req, res) { return res.statusCode > 400 }
@@ -23,6 +35,8 @@ app.use((req, res, next) => {
 	}
 	next(); // Go to next middleware
 });
+
+app.use(routes);
 
 app.use((req, res, next) => {
 	const error = new Error('No route was found for this request!');
